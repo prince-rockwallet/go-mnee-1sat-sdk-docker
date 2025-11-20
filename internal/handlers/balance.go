@@ -8,6 +8,14 @@ import (
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
 )
 
+// GetBalance godoc
+// @Summary      Get balance for a single address
+// @Description  Retrieves the MNEE balance for a specific wallet address
+// @Tags         Balance
+// @Produce      json
+// @Param        address   path      string  true  "Wallet Address"
+// @Success      200       {object}  map[string]interface{}
+// @Router       /balance/{address} [get]
 func GetBalance(c *gin.Context) {
 	address := c.Param("address")
 	if address == "" {
@@ -29,6 +37,14 @@ func GetBalance(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": balances[0]})
 }
 
+// GetBalances godoc
+// @Summary      Get balances for multiple addresses
+// @Description  Retrieves balances for a comma-separated list of addresses
+// @Tags         Balance
+// @Produce      json
+// @Param        addresses  query     string  true  "Comma-separated list of addresses"
+// @Success      200        {object}  map[string]interface{}
+// @Router       /balance [get]
 func GetBalances(c *gin.Context) {
 	addrStr := c.Query("addresses")
 	if addrStr == "" {

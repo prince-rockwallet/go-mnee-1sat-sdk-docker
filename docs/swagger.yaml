@@ -1,0 +1,232 @@
+basePath: /api
+definitions:
+  handlers.RawTxRequest:
+    properties:
+      rawTxHex:
+        example: 01000000...
+        type: string
+    required:
+    - rawTxHex
+    type: object
+  handlers.TransferRequest:
+    properties:
+      request:
+        items:
+          properties:
+            address:
+              example: 1G6CB3Ch4zFkPmuhZzEyChQmrQPfi86qk3
+              type: string
+            amount:
+              example: 0.1
+              type: number
+          required:
+          - address
+          - amount
+          type: object
+        type: array
+      wif:
+        example: L1...
+        type: string
+    required:
+    - request
+    - wif
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A high-performance Golang REST API wrapper for the MNEE Golang SDK.
+  title: MNEE SDK API Wrapper (Go)
+  version: "1.0"
+paths:
+  /balance:
+    get:
+      description: Retrieves balances for a comma-separated list of addresses
+      parameters:
+      - description: Comma-separated list of addresses
+        in: query
+        name: addresses
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get balances for multiple addresses
+      tags:
+      - Balance
+  /balance/{address}:
+    get:
+      description: Retrieves the MNEE balance for a specific wallet address
+      parameters:
+      - description: Wallet Address
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get balance for a single address
+      tags:
+      - Balance
+  /transaction/{address}:
+    get:
+      description: Retrieves transaction history for an address with pagination
+      parameters:
+      - description: Wallet Address
+        in: path
+        name: address
+        required: true
+        type: string
+      - description: Starting score (default 0)
+        in: query
+        name: fromScore
+        type: integer
+      - description: Limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get transaction history
+      tags:
+      - History
+  /transaction/submit-rawtx:
+    post:
+      consumes:
+      - application/json
+      description: Submits a pre-signed raw transaction string.
+      parameters:
+      - description: Raw Hex
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RawTxRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Submit Raw Transaction
+      tags:
+      - Transfer
+  /transaction/transfer:
+    post:
+      consumes:
+      - application/json
+      description: Executes a transfer and waits for cosigner response. Returns final
+        TxID.
+      parameters:
+      - description: Transfer Parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.TransferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Synchronous Transfer
+      tags:
+      - Transfer
+  /transaction/transfer-async:
+    post:
+      consumes:
+      - application/json
+      description: Executes a transfer and returns a ticket ID immediately for polling.
+      parameters:
+      - description: Transfer Parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.TransferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Asynchronous Transfer
+      tags:
+      - Transfer
+  /utxos/{address}/all:
+    get:
+      description: Retrieves all unspent transaction outputs for an address
+      parameters:
+      - description: Wallet Address
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all UTXOs
+      tags:
+      - UTXO
+  /utxos/paginated/{address}:
+    get:
+      description: Retrieves paginated unspent transaction outputs
+      parameters:
+      - description: Wallet Address
+        in: path
+        name: address
+        required: true
+        type: string
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10)
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get paginated UTXOs
+      tags:
+      - UTXO
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

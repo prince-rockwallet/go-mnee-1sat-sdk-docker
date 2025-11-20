@@ -8,6 +8,16 @@ import (
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
 )
 
+// GetHistory godoc
+// @Summary      Get transaction history
+// @Description  Retrieves transaction history for an address with pagination
+// @Tags         History
+// @Produce      json
+// @Param        address   path      string  true  "Wallet Address"
+// @Param        fromScore query     int     false "Starting score (default 0)"
+// @Param        limit     query     int     false "Limit (default 10)"
+// @Success      200       {object}  map[string]interface{}
+// @Router       /transaction/{address} [get]
 func GetHistory(c *gin.Context) {
 	address := c.Param("address")
 	fromScore, _ := strconv.Atoi(c.DefaultQuery("fromScore", "0"))

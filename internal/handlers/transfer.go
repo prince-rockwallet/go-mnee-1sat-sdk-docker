@@ -10,16 +10,25 @@ import (
 
 type TransferRequest struct {
 	Request []struct {
-		Address string  `json:"address" binding:"required"`
-		Amount  float64 `json:"amount" binding:"required"`
+		Address string  `json:"address" binding:"required" example:"1G6CB3Ch4zFkPmuhZzEyChQmrQPfi86qk3"`
+		Amount  float64 `json:"amount" binding:"required" example:"0.1"`
 	} `json:"request" binding:"required"`
-	Wif string `json:"wif" binding:"required"`
+	Wif string `json:"wif" binding:"required" example:"L1..."`
 }
 
 type RawTxRequest struct {
-	RawTxHex string `json:"rawTxHex" binding:"required"`
+	RawTxHex string `json:"rawTxHex" binding:"required" example:"01000000..."`
 }
 
+// TransferSync godoc
+// @Summary      Synchronous Transfer
+// @Description  Executes a transfer and waits for cosigner response. Returns final TxID.
+// @Tags         Transfer
+// @Accept       json
+// @Produce      json
+// @Param        request body TransferRequest true "Transfer Parameters"
+// @Success      200     {object} map[string]interface{}
+// @Router       /transaction/transfer [post]
 func TransferSync(c *gin.Context) {
 	var req TransferRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -48,6 +57,15 @@ func TransferSync(c *gin.Context) {
 	})
 }
 
+// TransferAsync godoc
+// @Summary      Asynchronous Transfer
+// @Description  Executes a transfer and returns a ticket ID immediately for polling.
+// @Tags         Transfer
+// @Accept       json
+// @Produce      json
+// @Param        request body TransferRequest true "Transfer Parameters"
+// @Success      200     {object} map[string]interface{}
+// @Router       /transaction/transfer-async [post]
 func TransferAsync(c *gin.Context) {
 	var req TransferRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -78,6 +96,15 @@ func TransferAsync(c *gin.Context) {
 	})
 }
 
+// SubmitRawTxAsync godoc
+// @Summary      Submit Raw Transaction
+// @Description  Submits a pre-signed raw transaction string.
+// @Tags         Transfer
+// @Accept       json
+// @Produce      json
+// @Param        request body RawTxRequest true "Raw Hex"
+// @Success      200     {object} map[string]interface{}
+// @Router       /transaction/submit-rawtx [post]
 func SubmitRawTxAsync(c *gin.Context) {
 	var req RawTxRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

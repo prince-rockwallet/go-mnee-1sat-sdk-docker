@@ -8,7 +8,23 @@ import (
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/config"
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/handlers"
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "github.com/mnee-xyz/go-mnee-1sat-sdk-docker/docs"
 )
+
+// @title           MNEE SDK API Wrapper (Go)
+// @version         1.0
+// @description     A high-performance Golang REST API wrapper for the MNEE Golang SDK.
+
+// @host      localhost:8080
+// @BasePath  /api
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 func main() {
 	cfg := config.LoadConfig()
@@ -32,6 +48,8 @@ func main() {
 		api.POST("/transaction/transfer-async", handlers.TransferAsync)
 		api.POST("/transaction/submit-rawtx", handlers.SubmitRawTxAsync)
 	}
+
+	r.GET("/api-docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	log.Printf("MNEE API Wrapper running on port %s", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {

@@ -1,0 +1,346 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "A high-performance Golang REST API wrapper for the MNEE Golang SDK.",
+        "title": "MNEE SDK API Wrapper (Go)",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/balance": {
+            "get": {
+                "description": "Retrieves balances for a comma-separated list of addresses",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Balance"
+                ],
+                "summary": "Get balances for multiple addresses",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Comma-separated list of addresses",
+                        "name": "addresses",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/balance/{address}": {
+            "get": {
+                "description": "Retrieves the MNEE balance for a specific wallet address",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Balance"
+                ],
+                "summary": "Get balance for a single address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Wallet Address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/submit-rawtx": {
+            "post": {
+                "description": "Submits a pre-signed raw transaction string.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transfer"
+                ],
+                "summary": "Submit Raw Transaction",
+                "parameters": [
+                    {
+                        "description": "Raw Hex",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.RawTxRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/transfer": {
+            "post": {
+                "description": "Executes a transfer and waits for cosigner response. Returns final TxID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transfer"
+                ],
+                "summary": "Synchronous Transfer",
+                "parameters": [
+                    {
+                        "description": "Transfer Parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.TransferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/transfer-async": {
+            "post": {
+                "description": "Executes a transfer and returns a ticket ID immediately for polling.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transfer"
+                ],
+                "summary": "Asynchronous Transfer",
+                "parameters": [
+                    {
+                        "description": "Transfer Parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.TransferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/{address}": {
+            "get": {
+                "description": "Retrieves transaction history for an address with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "History"
+                ],
+                "summary": "Get transaction history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Wallet Address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Starting score (default 0)",
+                        "name": "fromScore",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/utxos/paginated/{address}": {
+            "get": {
+                "description": "Retrieves paginated unspent transaction outputs",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UTXO"
+                ],
+                "summary": "Get paginated UTXOs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Wallet Address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size (default 10)",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/utxos/{address}/all": {
+            "get": {
+                "description": "Retrieves all unspent transaction outputs for an address",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UTXO"
+                ],
+                "summary": "Get all UTXOs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Wallet Address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handlers.RawTxRequest": {
+            "type": "object",
+            "required": [
+                "rawTxHex"
+            ],
+            "properties": {
+                "rawTxHex": {
+                    "type": "string",
+                    "example": "01000000..."
+                }
+            }
+        },
+        "handlers.TransferRequest": {
+            "type": "object",
+            "required": [
+                "request",
+                "wif"
+            ],
+            "properties": {
+                "request": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "address",
+                            "amount"
+                        ],
+                        "properties": {
+                            "address": {
+                                "type": "string",
+                                "example": "1G6CB3Ch4zFkPmuhZzEyChQmrQPfi86qk3"
+                            },
+                            "amount": {
+                                "type": "number",
+                                "example": 0.1
+                            }
+                        }
+                    }
+                },
+                "wif": {
+                    "type": "string",
+                    "example": "L1..."
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
