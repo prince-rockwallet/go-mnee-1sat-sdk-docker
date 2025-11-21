@@ -46,7 +46,8 @@ func main() {
 
 		api.POST("/transaction/transfer", handlers.TransferSync)
 		api.POST("/transaction/transfer-async", handlers.TransferAsync)
-		api.POST("/transaction/submit-rawtx", handlers.SubmitRawTxAsync)
+		api.POST("/transaction/submit-rawtx", handlers.SubmitRawTxSync)
+		api.POST("/transaction/submit-rawtx-async", handlers.SubmitRawTxAsync)
 	}
 
 	r.GET("/api-docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

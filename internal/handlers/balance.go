@@ -48,11 +48,24 @@ func GetBalance(c *gin.Context) {
 func GetBalances(c *gin.Context) {
 	addrStr := c.Query("addresses")
 	if addrStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Addresses query param required"})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "addresses query parameter is required"})
 		return
 	}
 
-	addresses := strings.Split(addrStr, ",")
+	rawAddresses := strings.Split(addrStr, ",")
+	var addresses []string
+	for _, addr := range rawAddresses {
+		trimmed := strings.TrimSpace(addr)
+		if trimmed != "" {
+			addresses = append(addresses, trimmed)
+		}
+	}
+
+	if len(addresses) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "No valid addresses provided"})
+		return
+	}
+
 	balances, err := services.Instance.GetBalances(c.Request.Context(), addresses)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})

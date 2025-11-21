@@ -22,7 +22,7 @@ type RawTxRequest struct {
 
 // TransferSync godoc
 // @Summary      Synchronous Transfer
-// @Description  Executes a transfer using multiple WIFs (if needed) and waits for cosigner response. Returns final TxID.
+// @Description  Executes a transfer using multiple WIFs and waits for cosigner response. Returns final TxID.
 // @Tags         Transfer
 // @Accept       json
 // @Produce      json
@@ -59,7 +59,7 @@ func TransferSync(c *gin.Context) {
 
 // TransferAsync godoc
 // @Summary      Asynchronous Transfer
-// @Description  Executes a transfer using multiple WIFs (if needed) and returns a ticket ID immediately for polling.
+// @Description  Executes a transfer using multiple WIFs and returns a ticket ID immediately for polling.
 // @Tags         Transfer
 // @Accept       json
 // @Produce      json
@@ -96,15 +96,43 @@ func TransferAsync(c *gin.Context) {
 	})
 }
 
-// SubmitRawTxAsync godoc
-// @Summary      Submit Raw Transaction
-// @Description  Submits a pre-signed raw transaction string.
+// SubmitRawTxSync godoc
+// @Summary      Submit Raw Transaction (Synchronous)
+// @Description  Submits a pre-signed raw transaction hex and waits for the cosigner. Returns the final TxID.
 // @Tags         Transfer
 // @Accept       json
 // @Produce      json
 // @Param        request body RawTxRequest true "Raw Hex"
 // @Success      200     {object} map[string]interface{}
 // @Router       /transaction/submit-rawtx [post]
+func SubmitRawTxSync(c *gin.Context) {
+	var req RawTxRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": err.Error()})
+		return
+	}
+
+	resp, err := services.Instance.SubmitRawTxSync(c.Request.Context(), req.RawTxHex)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    resp,
+	})
+}
+
+// SubmitRawTxAsync godoc
+// @Summary      Submit Raw Transaction (Asynchronous)
+// @Description  Submits a pre-signed raw transaction hex and returns a ticket ID immediately.
+// @Tags         Transfer
+// @Accept       json
+// @Produce      json
+// @Param        request body RawTxRequest true "Raw Hex"
+// @Success      200     {object} map[string]interface{}
+// @Router       /transaction/submit-rawtx-async [post]
 func SubmitRawTxAsync(c *gin.Context) {
 	var req RawTxRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
