@@ -75,6 +75,27 @@ const docTemplate = `{
                 }
             }
         },
+        "/config": {
+            "get": {
+                "description": "Returns current MNEE system configuration.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Config"
+                ],
+                "summary": "Get System Config",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/transaction": {
             "get": {
                 "description": "Retrieves transaction history for one or more addresses with pagination",
@@ -117,9 +138,74 @@ const docTemplate = `{
                 }
             }
         },
+        "/transaction/partial-sign": {
+            "post": {
+                "description": "Builds and signs a transaction *only* with the provided WIFs. Returns hex.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Partial Sign Transaction",
+                "parameters": [
+                    {
+                        "description": "Transfer Parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.TransferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/status/{ticketId}": {
+            "get": {
+                "description": "Polls the status of a transaction ticket until it is processed or times out.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Poll Ticket Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ticket ID",
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/transaction/submit-rawtx": {
             "post": {
-                "description": "Submits a pre-signed raw transaction string.",
+                "description": "Submits a pre-signed raw transaction hex and waits for the cosigner. Returns the final TxID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -129,7 +215,42 @@ const docTemplate = `{
                 "tags": [
                     "Transfer"
                 ],
-                "summary": "Submit Raw Transaction",
+                "summary": "Submit Raw Transaction (Synchronous)",
+                "parameters": [
+                    {
+                        "description": "Raw Hex",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.RawTxRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/submit-rawtx-async": {
+            "post": {
+                "description": "Submits a pre-signed raw transaction hex and returns a ticket ID immediately.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transfer"
+                ],
+                "summary": "Submit Raw Transaction (Asynchronous)",
                 "parameters": [
                     {
                         "description": "Raw Hex",
@@ -154,7 +275,7 @@ const docTemplate = `{
         },
         "/transaction/transfer": {
             "post": {
-                "description": "Executes a transfer using multiple WIFs (if needed) and waits for cosigner response. Returns final TxID.",
+                "description": "Executes a transfer using multiple WIFs and waits for cosigner response. Returns final TxID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -189,7 +310,7 @@ const docTemplate = `{
         },
         "/transaction/transfer-async": {
             "post": {
-                "description": "Executes a transfer using multiple WIFs (if needed) and returns a ticket ID immediately for polling.",
+                "description": "Executes a transfer using multiple WIFs and returns a ticket ID immediately for polling.",
                 "consumes": [
                     "application/json"
                 ],
@@ -359,7 +480,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
+	Version:          "1.1",
 	Host:             "localhost:8080",
 	BasePath:         "/api",
 	Schemes:          []string{},

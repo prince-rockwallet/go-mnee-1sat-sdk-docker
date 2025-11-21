@@ -40,7 +40,7 @@ info:
   contact: {}
   description: A high-performance Golang REST API wrapper for the MNEE Golang SDK.
   title: MNEE SDK API Wrapper (Go)
-  version: "1.0"
+  version: "1.1"
 paths:
   /balance:
     get:
@@ -82,6 +82,20 @@ paths:
       summary: Get balance for a single address
       tags:
       - Balance
+  /config:
+    get:
+      description: Returns current MNEE system configuration.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get System Config
+      tags:
+      - Config
   /transaction:
     get:
       description: Retrieves transaction history for one or more addresses with pagination
@@ -110,11 +124,57 @@ paths:
       summary: Get transaction history for multiple addresses
       tags:
       - History
+  /transaction/partial-sign:
+    post:
+      consumes:
+      - application/json
+      description: Builds and signs a transaction *only* with the provided WIFs. Returns
+        hex.
+      parameters:
+      - description: Transfer Parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.TransferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Partial Sign Transaction
+      tags:
+      - Transaction
+  /transaction/status/{ticketId}:
+    get:
+      description: Polls the status of a transaction ticket until it is processed
+        or times out.
+      parameters:
+      - description: Ticket ID
+        in: path
+        name: ticketId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Poll Ticket Status
+      tags:
+      - Transaction
   /transaction/submit-rawtx:
     post:
       consumes:
       - application/json
-      description: Submits a pre-signed raw transaction string.
+      description: Submits a pre-signed raw transaction hex and waits for the cosigner.
+        Returns the final TxID.
       parameters:
       - description: Raw Hex
         in: body
@@ -130,15 +190,39 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Submit Raw Transaction
+      summary: Submit Raw Transaction (Synchronous)
+      tags:
+      - Transfer
+  /transaction/submit-rawtx-async:
+    post:
+      consumes:
+      - application/json
+      description: Submits a pre-signed raw transaction hex and returns a ticket ID
+        immediately.
+      parameters:
+      - description: Raw Hex
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RawTxRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Submit Raw Transaction (Asynchronous)
       tags:
       - Transfer
   /transaction/transfer:
     post:
       consumes:
       - application/json
-      description: Executes a transfer using multiple WIFs (if needed) and waits for
-        cosigner response. Returns final TxID.
+      description: Executes a transfer using multiple WIFs and waits for cosigner
+        response. Returns final TxID.
       parameters:
       - description: Transfer Parameters
         in: body
@@ -161,8 +245,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Executes a transfer using multiple WIFs (if needed) and returns
-        a ticket ID immediately for polling.
+      description: Executes a transfer using multiple WIFs and returns a ticket ID
+        immediately for polling.
       parameters:
       - description: Transfer Parameters
         in: body

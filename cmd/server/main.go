@@ -16,7 +16,7 @@ import (
 )
 
 // @title           MNEE SDK API Wrapper (Go)
-// @version         1.0
+// @version         1.1
 // @description     A high-performance Golang REST API wrapper for the MNEE Golang SDK.
 
 // @host      localhost:8080
@@ -36,6 +36,8 @@ func main() {
 
 	api := r.Group("/api")
 	{
+		api.GET("/config", handlers.GetConfig)
+
 		api.GET("/balance/:address", handlers.GetBalance)
 		api.GET("/balance", handlers.GetBalances)
 
@@ -43,9 +45,11 @@ func main() {
 		api.GET("/utxos/all", handlers.GetAllUtxos)
 
 		api.GET("/transaction", handlers.GetHistory)
+		api.GET("/transaction/status/:ticketId", handlers.PollTicket)
 
 		api.POST("/transaction/transfer", handlers.TransferSync)
 		api.POST("/transaction/transfer-async", handlers.TransferAsync)
+		api.POST("/transaction/partial-sign", handlers.PartialSign)
 		api.POST("/transaction/submit-rawtx", handlers.SubmitRawTxSync)
 		api.POST("/transaction/submit-rawtx-async", handlers.SubmitRawTxAsync)
 	}
