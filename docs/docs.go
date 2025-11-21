@@ -75,6 +75,48 @@ const docTemplate = `{
                 }
             }
         },
+        "/transaction": {
+            "get": {
+                "description": "Retrieves transaction history for one or more addresses with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "History"
+                ],
+                "summary": "Get transaction history for multiple addresses",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Comma-separated list of Wallet Addresses",
+                        "name": "addresses",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Starting score (default 0)",
+                        "name": "fromScore",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/transaction/submit-rawtx": {
             "post": {
                 "description": "Submits a pre-signed raw transaction string.",
@@ -112,7 +154,7 @@ const docTemplate = `{
         },
         "/transaction/transfer": {
             "post": {
-                "description": "Executes a transfer and waits for cosigner response. Returns final TxID.",
+                "description": "Executes a transfer using multiple WIFs (if needed) and waits for cosigner response. Returns final TxID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -147,7 +189,7 @@ const docTemplate = `{
         },
         "/transaction/transfer-async": {
             "post": {
-                "description": "Executes a transfer and returns a ticket ID immediately for polling.",
+                "description": "Executes a transfer using multiple WIFs (if needed) and returns a ticket ID immediately for polling.",
                 "consumes": [
                     "application/json"
                 ],
@@ -167,48 +209,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/handlers.TransferRequest"
                         }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/transaction/{address}": {
-            "get": {
-                "description": "Retrieves transaction history for an address with pagination",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "History"
-                ],
-                "summary": "Get transaction history",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Wallet Address",
-                        "name": "address",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Starting score (default 0)",
-                        "name": "fromScore",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit (default 10)",
-                        "name": "limit",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -312,7 +312,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "request",
-                "wif"
+                "wifs"
             ],
             "properties": {
                 "request": {
@@ -335,9 +335,15 @@ const docTemplate = `{
                         }
                     }
                 },
-                "wif": {
-                    "type": "string",
-                    "example": "L1..."
+                "wifs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "L1dRKo...",
+                        "K2..."
+                    ]
                 }
             }
         }

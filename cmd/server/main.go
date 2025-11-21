@@ -42,7 +42,7 @@ func main() {
 		api.GET("/utxos/paginated/:address", handlers.GetPaginatedUtxos)
 		api.GET("/utxos/:address/all", handlers.GetAllUtxos)
 
-		api.GET("/transaction/:address", handlers.GetHistory)
+		api.GET("/transaction", handlers.GetHistory)
 
 		api.POST("/transaction/transfer", handlers.TransferSync)
 		api.POST("/transaction/transfer-async", handlers.TransferAsync)

@@ -13,7 +13,7 @@ type TransferRequest struct {
 		Address string  `json:"address" binding:"required" example:"1G6CB3Ch4zFkPmuhZzEyChQmrQPfi86qk3"`
 		Amount  float64 `json:"amount" binding:"required" example:"0.1"`
 	} `json:"request" binding:"required"`
-	Wif string `json:"wif" binding:"required" example:"L1..."`
+	Wifs []string `json:"wifs" binding:"required" example:"L1dRKo...,K2..."`
 }
 
 type RawTxRequest struct {
@@ -22,7 +22,7 @@ type RawTxRequest struct {
 
 // TransferSync godoc
 // @Summary      Synchronous Transfer
-// @Description  Executes a transfer and waits for cosigner response. Returns final TxID.
+// @Description  Executes a transfer using multiple WIFs (if needed) and waits for cosigner response. Returns final TxID.
 // @Tags         Transfer
 // @Accept       json
 // @Produce      json
@@ -45,7 +45,7 @@ func TransferSync(c *gin.Context) {
 		})
 	}
 
-	resp, err := services.Instance.SynchronousTransfer(c.Request.Context(), []string{req.Wif}, dtos, false, nil)
+	resp, err := services.Instance.SynchronousTransfer(c.Request.Context(), req.Wifs, dtos, false, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
 		return
@@ -59,7 +59,7 @@ func TransferSync(c *gin.Context) {
 
 // TransferAsync godoc
 // @Summary      Asynchronous Transfer
-// @Description  Executes a transfer and returns a ticket ID immediately for polling.
+// @Description  Executes a transfer using multiple WIFs (if needed) and returns a ticket ID immediately for polling.
 // @Tags         Transfer
 // @Accept       json
 // @Produce      json
@@ -82,7 +82,7 @@ func TransferAsync(c *gin.Context) {
 		})
 	}
 
-	ticketID, err := services.Instance.AsynchronousTransfer(c.Request.Context(), []string{req.Wif}, dtos, false, nil, nil, nil)
+	ticketID, err := services.Instance.AsynchronousTransfer(c.Request.Context(), req.Wifs, dtos, false, nil, nil, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
 		return

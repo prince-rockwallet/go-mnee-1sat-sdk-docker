@@ -24,12 +24,16 @@ definitions:
           - amount
           type: object
         type: array
-      wif:
-        example: L1...
-        type: string
+      wifs:
+        example:
+        - L1dRKo...
+        - K2...
+        items:
+          type: string
+        type: array
     required:
     - request
-    - wif
+    - wifs
     type: object
 host: localhost:8080
 info:
@@ -78,13 +82,13 @@ paths:
       summary: Get balance for a single address
       tags:
       - Balance
-  /transaction/{address}:
+  /transaction:
     get:
-      description: Retrieves transaction history for an address with pagination
+      description: Retrieves transaction history for one or more addresses with pagination
       parameters:
-      - description: Wallet Address
-        in: path
-        name: address
+      - description: Comma-separated list of Wallet Addresses
+        in: query
+        name: addresses
         required: true
         type: string
       - description: Starting score (default 0)
@@ -103,7 +107,7 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Get transaction history
+      summary: Get transaction history for multiple addresses
       tags:
       - History
   /transaction/submit-rawtx:
@@ -133,8 +137,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Executes a transfer and waits for cosigner response. Returns final
-        TxID.
+      description: Executes a transfer using multiple WIFs (if needed) and waits for
+        cosigner response. Returns final TxID.
       parameters:
       - description: Transfer Parameters
         in: body
@@ -157,7 +161,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Executes a transfer and returns a ticket ID immediately for polling.
+      description: Executes a transfer using multiple WIFs (if needed) and returns
+        a ticket ID immediately for polling.
       parameters:
       - description: Transfer Parameters
         in: body
