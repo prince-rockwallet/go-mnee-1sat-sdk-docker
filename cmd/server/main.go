@@ -39,8 +39,8 @@ func main() {
 		api.GET("/balance/:address", handlers.GetBalance)
 		api.GET("/balance", handlers.GetBalances)
 
-		api.GET("/utxos/paginated/:address", handlers.GetPaginatedUtxos)
-		api.GET("/utxos/:address/all", handlers.GetAllUtxos)
+		api.GET("/utxos/paginated", handlers.GetPaginatedUtxos)
+		api.GET("/utxos/all", handlers.GetAllUtxos)
 
 		api.GET("/transaction", handlers.GetHistory)
 

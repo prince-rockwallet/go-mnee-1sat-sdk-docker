@@ -222,35 +222,23 @@ const docTemplate = `{
                 }
             }
         },
-        "/utxos/paginated/{address}": {
+        "/utxos/all": {
             "get": {
-                "description": "Retrieves paginated unspent transaction outputs",
+                "description": "Retrieves all unspent transaction outputs for one or more addresses",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "UTXO"
                 ],
-                "summary": "Get paginated UTXOs",
+                "summary": "Get all UTXOs for multiple addresses",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Wallet Address",
-                        "name": "address",
-                        "in": "path",
+                        "description": "Comma-separated list of Wallet Addresses",
+                        "name": "addresses",
+                        "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page number (default 1)",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page size (default 10)",
-                        "name": "size",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -264,23 +252,35 @@ const docTemplate = `{
                 }
             }
         },
-        "/utxos/{address}/all": {
+        "/utxos/paginated": {
             "get": {
-                "description": "Retrieves all unspent transaction outputs for an address",
+                "description": "Retrieves paginated unspent transaction outputs for one or more addresses",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "UTXO"
                 ],
-                "summary": "Get all UTXOs",
+                "summary": "Get paginated UTXOs for multiple addresses",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Wallet Address",
-                        "name": "address",
-                        "in": "path",
+                        "description": "Comma-separated list of Wallet Addresses",
+                        "name": "addresses",
+                        "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size (default 10)",
+                        "name": "size",
+                        "in": "query"
                     }
                 ],
                 "responses": {

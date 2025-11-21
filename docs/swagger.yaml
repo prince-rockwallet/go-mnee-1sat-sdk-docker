@@ -181,13 +181,13 @@ paths:
       summary: Asynchronous Transfer
       tags:
       - Transfer
-  /utxos/{address}/all:
+  /utxos/all:
     get:
-      description: Retrieves all unspent transaction outputs for an address
+      description: Retrieves all unspent transaction outputs for one or more addresses
       parameters:
-      - description: Wallet Address
-        in: path
-        name: address
+      - description: Comma-separated list of Wallet Addresses
+        in: query
+        name: addresses
         required: true
         type: string
       produces:
@@ -198,16 +198,17 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Get all UTXOs
+      summary: Get all UTXOs for multiple addresses
       tags:
       - UTXO
-  /utxos/paginated/{address}:
+  /utxos/paginated:
     get:
-      description: Retrieves paginated unspent transaction outputs
+      description: Retrieves paginated unspent transaction outputs for one or more
+        addresses
       parameters:
-      - description: Wallet Address
-        in: path
-        name: address
+      - description: Comma-separated list of Wallet Addresses
+        in: query
+        name: addresses
         required: true
         type: string
       - description: Page number (default 1)
@@ -226,7 +227,7 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Get paginated UTXOs
+      summary: Get paginated UTXOs for multiple addresses
       tags:
       - UTXO
 securityDefinitions:
