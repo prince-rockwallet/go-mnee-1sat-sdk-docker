@@ -15,7 +15,7 @@ Replace `your_api_key_here` with your actual MNEE API key.
 
 ```bash
 docker run -d \
-  -p 3000:3000 \
+  -p 8080:8080 \
   -e MNEE_API_KEY="your_api_key_here" \
   -e MNEE_ENV="sandbox" \
   --name mnee-api \
