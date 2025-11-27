@@ -35,13 +35,12 @@ definitions:
     - request
     - wifs
     type: object
-  models.GetBalanceFailureResponse:
+  models.GenericFailureResponse:
     properties:
       message:
-        example: failed to fetch balances
+        example: error description
         type: string
       success:
-        default: false
         example: false
         type: boolean
     type: object
@@ -52,16 +51,6 @@ definitions:
       message:
         type: string
       success:
-        type: boolean
-    type: object
-  models.GetBalancesFailureResponse:
-    properties:
-      message:
-        example: failed to fetch balances
-        type: string
-      success:
-        default: false
-        example: false
         type: boolean
     type: object
   models.GetBalancesSuccessResponse:
@@ -75,16 +64,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.GetConfigFailureResponse:
-    properties:
-      message:
-        example: failed to fetch config
-        type: string
-      success:
-        default: false
-        example: false
-        type: boolean
-    type: object
   models.GetConfigSuccessResponse:
     properties:
       data:
@@ -92,6 +71,75 @@ definitions:
       message:
         type: string
       success:
+        type: boolean
+    type: object
+  models.GetHistorySuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.HistoryDataWrapper'
+      success:
+        example: true
+        type: boolean
+    type: object
+  models.GetTicketSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/types.Ticket'
+      success:
+        example: true
+        type: boolean
+    type: object
+  models.GetUtxosSuccessResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.MneeTxo'
+        type: array
+      success:
+        example: true
+        type: boolean
+    type: object
+  models.HistoryDataWrapper:
+    properties:
+      history:
+        items:
+          $ref: '#/definitions/types.TransactionHistoryDTO'
+        type: array
+    type: object
+  models.PartialSignSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.RawTxWrapper'
+      success:
+        example: true
+        type: boolean
+    type: object
+  models.RawTxWrapper:
+    properties:
+      rawTxHex:
+        example: 02000000...
+        type: string
+    type: object
+  models.TicketIdWrapper:
+    properties:
+      ticketId:
+        example: KKJS-...
+        type: string
+    type: object
+  models.TransferAsyncSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.TicketIdWrapper'
+      success:
+        example: true
+        type: boolean
+    type: object
+  models.TransferSyncSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/types.TransferResponseDTO'
+      success:
+        example: true
         type: boolean
     type: object
   types.BalanceDataDTO:
@@ -103,6 +151,35 @@ definitions:
       precised:
         type: number
     type: object
+  types.BsvData:
+    properties:
+      amt:
+        type: integer
+      dec:
+        type: integer
+      icon:
+        type: string
+      id:
+        type: string
+      op:
+        type: string
+      sym:
+        type: string
+    type: object
+  types.CosignData:
+    properties:
+      address:
+        type: string
+      cosigner:
+        type: string
+    type: object
+  types.Data:
+    properties:
+      bsv21:
+        $ref: '#/definitions/types.BsvData'
+      cosign:
+        $ref: '#/definitions/types.CosignData'
+    type: object
   types.Fee:
     properties:
       fee:
@@ -110,6 +187,35 @@ definitions:
       max:
         type: integer
       min:
+        type: integer
+    type: object
+  types.MneeTxo:
+    properties:
+      data:
+        $ref: '#/definitions/types.Data'
+      height:
+        type: integer
+      idx:
+        type: integer
+      outpoint:
+        type: string
+      owners:
+        items:
+          type: string
+        type: array
+      satoshis:
+        type: integer
+      score:
+        type: integer
+      script:
+        type: string
+      senders:
+        items:
+          type: string
+        type: array
+      txid:
+        type: string
+      vout:
         type: integer
     type: object
   types.SystemConfig:
@@ -129,6 +235,71 @@ definitions:
       mintAddress:
         type: string
       tokenId:
+        type: string
+    type: object
+  types.Ticket:
+    properties:
+      action_requested:
+        type: string
+      callback_secret:
+        type: string
+      callback_url:
+        type: string
+      createdAt:
+        type: string
+      errors:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      status:
+        $ref: '#/definitions/types.TicketStatus'
+      tx_hex:
+        type: string
+      tx_id:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  types.TicketStatus:
+    enum:
+    - BROADCASTING
+    - SUCCESS
+    type: string
+    x-enum-varnames:
+    - BROADCASTING
+    - SUCCESS
+  types.TransactionHistoryDTO:
+    properties:
+      height:
+        type: integer
+      idx:
+        type: integer
+      outs:
+        items:
+          type: integer
+        type: array
+      rawtx:
+        type: string
+      receivers:
+        items:
+          type: string
+        type: array
+      score:
+        type: integer
+      senders:
+        items:
+          type: string
+        type: array
+      txid:
+        type: string
+    type: object
+  types.TransferResponseDTO:
+    properties:
+      txhex:
+        type: string
+      txid:
         type: string
     type: object
 host: localhost:8080
@@ -157,11 +328,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.GetBalancesFailureResponse'
+            $ref: '#/definitions/models.GenericFailureResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.GetBalancesFailureResponse'
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Get balances for multiple addresses
       tags:
       - Balance
@@ -184,11 +355,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.GetBalanceFailureResponse'
+            $ref: '#/definitions/models.GenericFailureResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.GetBalanceFailureResponse'
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Get balance for a single address
       tags:
       - Balance
@@ -205,11 +376,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.GetConfigSuccessResponse'
+            $ref: '#/definitions/models.GenericFailureResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/models.GetConfigFailureResponse'
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Get System Config
       tags:
       - Config
@@ -236,8 +407,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.GetHistorySuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Get transaction history for multiple addresses
       tags:
       - History
@@ -260,8 +438,19 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.PartialSignSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Partial Sign Transaction
       tags:
       - Transaction
@@ -281,8 +470,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.GetTicketSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Poll Ticket Status
       tags:
       - Transaction
@@ -305,8 +501,19 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.TransferSyncSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Submit Raw Transaction (Synchronous)
       tags:
       - Transfer
@@ -329,8 +536,19 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.TransferAsyncSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Submit Raw Transaction (Asynchronous)
       tags:
       - Transfer
@@ -353,8 +571,19 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.TransferSyncSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Synchronous Transfer
       tags:
       - Transfer
@@ -377,8 +606,19 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.TransferAsyncSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Asynchronous Transfer
       tags:
       - Transfer
@@ -397,8 +637,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.GetUtxosSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Get all UTXOs for multiple addresses
       tags:
       - UTXO
@@ -426,8 +673,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.GetUtxosSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GenericFailureResponse'
       summary: Get paginated UTXOs for multiple addresses
       tags:
       - UTXO

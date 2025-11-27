@@ -7,6 +7,7 @@ import (
 
 	"github.com/bsv-blockchain/go-sdk/script"
 	"github.com/gin-gonic/gin"
+	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/models" // Import models
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
 )
 
@@ -18,12 +19,14 @@ import (
 // @Param        addresses query     string  true  "Comma-separated list of Wallet Addresses"
 // @Param        fromScore query     int     false "Starting score (default 0)"
 // @Param        limit     query     int     false "Limit (default 10)"
-// @Success      200       {object}  map[string]interface{}
+// @Success      200       {object}  models.GetHistorySuccessResponse
+// @Failure      400       {object}  models.GenericFailureResponse
+// @Failure      500       {object}  models.GenericFailureResponse
 // @Router       /transaction [get]
 func GetHistory(c *gin.Context) {
 	addrStr := c.Query("addresses")
 	if addrStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "addresses query parameter is required"})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "addresses query parameter is required"})
 		return
 	}
 
@@ -34,16 +37,15 @@ func GetHistory(c *gin.Context) {
 		if trimmed != "" {
 			address, err := script.NewAddressFromString(trimmed)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address: " + trimmed})
+				c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "Invalid wallet address: " + trimmed})
 				return
 			}
 			addresses = append(addresses, address.AddressString)
-			addresses = append(addresses, trimmed)
 		}
 	}
 
 	if len(addresses) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "No valid addresses provided"})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "No valid addresses provided"})
 		return
 	}
 
@@ -55,11 +57,11 @@ func GetHistory(c *gin.Context) {
 		var err error
 		fromScore, err = strconv.Atoi(fromQuery)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "fromScore must be a valid integer"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "fromScore must be a valid integer"})
 			return
 		}
 		if fromScore < 0 {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "fromScore must not be negative"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "fromScore must not be negative"})
 			return
 		}
 	}
@@ -72,18 +74,18 @@ func GetHistory(c *gin.Context) {
 		var err error
 		limit, err = strconv.Atoi(limitQuery)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "limit must be a valid integer"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "limit must be a valid integer"})
 			return
 		}
 		if limit < 0 {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "limit must not be negative"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "limit must not be negative"})
 			return
 		}
 	}
 
 	history, err := services.Instance.GetSpecificTransactionHistory(c.Request.Context(), addresses, fromScore, limit)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 

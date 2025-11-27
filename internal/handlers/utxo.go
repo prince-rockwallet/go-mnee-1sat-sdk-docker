@@ -7,6 +7,7 @@ import (
 
 	"github.com/bsv-blockchain/go-sdk/script"
 	"github.com/gin-gonic/gin"
+	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/models" // Import models
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
 )
 
@@ -16,12 +17,14 @@ import (
 // @Tags         UTXO
 // @Produce      json
 // @Param        addresses query     string  true  "Comma-separated list of Wallet Addresses"
-// @Success      200       {object}  map[string]interface{}
+// @Success      200       {object}  models.GetUtxosSuccessResponse
+// @Failure      400       {object}  models.GenericFailureResponse
+// @Failure      500       {object}  models.GenericFailureResponse
 // @Router       /utxos/all [get]
 func GetAllUtxos(c *gin.Context) {
 	addrStr := c.Query("addresses")
 	if addrStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "addresses query parameter is required"})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "addresses query parameter is required"})
 		return
 	}
 
@@ -32,7 +35,7 @@ func GetAllUtxos(c *gin.Context) {
 		if trimmed != "" {
 			address, err := script.NewAddressFromString(trimmed)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address: " + trimmed})
+				c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "Invalid wallet address: " + trimmed})
 				return
 			}
 			addresses = append(addresses, address.AddressString)
@@ -40,13 +43,13 @@ func GetAllUtxos(c *gin.Context) {
 	}
 
 	if len(addresses) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "No valid addresses provided"})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "No valid addresses provided"})
 		return
 	}
 
 	txos, err := services.Instance.GetUnspentTxos(c.Request.Context(), addresses)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 
@@ -61,12 +64,14 @@ func GetAllUtxos(c *gin.Context) {
 // @Param        addresses query     string  true  "Comma-separated list of Wallet Addresses"
 // @Param        page      query     int     false "Page number (default 1)"
 // @Param        size      query     int     false "Page size (default 10)"
-// @Success      200       {object}  map[string]interface{}
+// @Success      200       {object}  models.GetUtxosSuccessResponse
+// @Failure      400       {object}  models.GenericFailureResponse
+// @Failure      500       {object}  models.GenericFailureResponse
 // @Router       /utxos/paginated [get]
 func GetPaginatedUtxos(c *gin.Context) {
 	addrStr := c.Query("addresses")
 	if addrStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "addresses query parameter is required"})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "addresses query parameter is required"})
 		return
 	}
 
@@ -77,7 +82,7 @@ func GetPaginatedUtxos(c *gin.Context) {
 		if trimmed != "" {
 			address, err := script.NewAddressFromString(trimmed)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address: " + trimmed})
+				c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "Invalid wallet address: " + trimmed})
 				return
 			}
 			addresses = append(addresses, address.AddressString)
@@ -85,7 +90,7 @@ func GetPaginatedUtxos(c *gin.Context) {
 	}
 
 	if len(addresses) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "No valid addresses provided"})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "No valid addresses provided"})
 		return
 	}
 
@@ -97,11 +102,11 @@ func GetPaginatedUtxos(c *gin.Context) {
 		var err error
 		page, err = strconv.Atoi(pageQuery)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "page must be a valid integer"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "page must be a valid integer"})
 			return
 		}
 		if page < 1 {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "page must be greater than 0"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "page must be greater than 0"})
 			return
 		}
 	}
@@ -114,18 +119,18 @@ func GetPaginatedUtxos(c *gin.Context) {
 		var err error
 		size, err = strconv.Atoi(sizeQuery)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "size must be a valid integer"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "size must be a valid integer"})
 			return
 		}
 		if size < 1 {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "size must be greater than 0"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "size must be greater than 0"})
 			return
 		}
 	}
 
 	txos, err := services.Instance.GetPaginatedUnspentTxos(c.Request.Context(), addresses, page, size)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 

@@ -13,8 +13,8 @@ import (
 // @Tags         Config
 // @Produce      json
 // @Success      200       {object}  models.GetConfigSuccessResponse
-// @Success      400       {object}  models.GetConfigSuccessResponse
-// @Failure      500       {object}  models.GetConfigFailureResponse
+// @Success      400       {object}  models.GenericFailureResponse
+// @Failure      500       {object}  models.GenericFailureResponse
 // @Router       /config [get]
 func GetConfig(c *gin.Context) {
 	config, err := services.Instance.GetConfig(c.Request.Context())

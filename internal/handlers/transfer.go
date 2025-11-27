@@ -6,6 +6,7 @@ import (
 	"github.com/bsv-blockchain/go-sdk/script"
 	"github.com/gin-gonic/gin"
 	mnee "github.com/mnee-xyz/go-mnee-1sat-sdk"
+	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/models" // Import models
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
 )
 
@@ -28,12 +29,15 @@ type RawTxRequest struct {
 // @Accept       json
 // @Produce      json
 // @Param        request body TransferRequest true "Transfer Parameters"
-// @Success      200     {object} map[string]interface{}
+// @Success      200     {object} models.TransferSyncSuccessResponse
+// @Failure      422     {object} models.GenericFailureResponse
+// @Failure      400     {object} models.GenericFailureResponse
+// @Failure      500     {object} models.GenericFailureResponse
 // @Router       /transaction/transfer [post]
 func TransferSync(c *gin.Context) {
 	var req TransferRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "message": "Unprocessable Entity: " + err.Error()})
+		c.JSON(http.StatusUnprocessableEntity, models.GenericFailureResponse{Success: false, Message: "Unprocessable Entity: " + err.Error()})
 		return
 	}
 
@@ -41,12 +45,12 @@ func TransferSync(c *gin.Context) {
 	for _, r := range req.Request {
 		address, err := script.NewAddressFromString(r.Address)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address in request: " + r.Address})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "Invalid wallet address in request: " + r.Address})
 			return
 		}
 
 		if r.Amount <= 0 {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Amount must be greater than 0"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "Amount must be greater than 0"})
 			return
 		}
 
@@ -59,7 +63,7 @@ func TransferSync(c *gin.Context) {
 
 	resp, err := services.Instance.SynchronousTransfer(c.Request.Context(), req.Wifs, dtos, false, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 
@@ -76,12 +80,15 @@ func TransferSync(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request body TransferRequest true "Transfer Parameters"
-// @Success      200     {object} map[string]interface{}
+// @Success      200     {object} models.TransferAsyncSuccessResponse
+// @Failure      422     {object} models.GenericFailureResponse
+// @Failure      400     {object} models.GenericFailureResponse
+// @Failure      500     {object} models.GenericFailureResponse
 // @Router       /transaction/transfer-async [post]
 func TransferAsync(c *gin.Context) {
 	var req TransferRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "message": "Unprocessable Entity: " + err.Error()})
+		c.JSON(http.StatusUnprocessableEntity, models.GenericFailureResponse{Success: false, Message: "Unprocessable Entity: " + err.Error()})
 		return
 	}
 
@@ -89,12 +96,12 @@ func TransferAsync(c *gin.Context) {
 	for _, r := range req.Request {
 		address, err := script.NewAddressFromString(r.Address)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address in request: " + r.Address})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "Invalid wallet address in request: " + r.Address})
 			return
 		}
 
 		if r.Amount <= 0 {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Amount must be greater than 0"})
+			c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "Amount must be greater than 0"})
 			return
 		}
 
@@ -107,7 +114,7 @@ func TransferAsync(c *gin.Context) {
 
 	ticketID, err := services.Instance.AsynchronousTransfer(c.Request.Context(), req.Wifs, dtos, false, nil, nil, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 
@@ -126,23 +133,26 @@ func TransferAsync(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request body RawTxRequest true "Raw Hex"
-// @Success      200     {object} map[string]interface{}
+// @Success      200     {object} models.TransferSyncSuccessResponse
+// @Failure      422     {object} models.GenericFailureResponse
+// @Failure      400     {object} models.GenericFailureResponse
+// @Failure      500     {object} models.GenericFailureResponse
 // @Router       /transaction/submit-rawtx [post]
 func SubmitRawTxSync(c *gin.Context) {
 	var req RawTxRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "message": "Unprocessable Entity: " + err.Error()})
+		c.JSON(http.StatusUnprocessableEntity, models.GenericFailureResponse{Success: false, Message: "Unprocessable Entity: " + err.Error()})
 		return
 	}
 
 	if req.RawTxHex == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "rawTxHex cannot be empty"})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "rawTxHex cannot be empty"})
 		return
 	}
 
 	resp, err := services.Instance.SubmitRawTxSync(c.Request.Context(), req.RawTxHex)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 
@@ -159,23 +169,26 @@ func SubmitRawTxSync(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request body RawTxRequest true "Raw Hex"
-// @Success      200     {object} map[string]interface{}
+// @Success      200     {object} models.TransferAsyncSuccessResponse
+// @Failure      422     {object} models.GenericFailureResponse
+// @Failure      400     {object} models.GenericFailureResponse
+// @Failure      500     {object} models.GenericFailureResponse
 // @Router       /transaction/submit-rawtx-async [post]
 func SubmitRawTxAsync(c *gin.Context) {
 	var req RawTxRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"success": false, "message": "Unprocessable Entity: " + err.Error()})
+		c.JSON(http.StatusUnprocessableEntity, models.GenericFailureResponse{Success: false, Message: "Unprocessable Entity: " + err.Error()})
 		return
 	}
 
 	if req.RawTxHex == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "rawTxHex cannot be empty"})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: "rawTxHex cannot be empty"})
 		return
 	}
 
 	ticketID, err := services.Instance.SubmitRawTxAsync(c.Request.Context(), req.RawTxHex, nil, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 

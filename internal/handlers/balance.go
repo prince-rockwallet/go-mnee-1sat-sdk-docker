@@ -17,8 +17,8 @@ import (
 // @Produce      json
 // @Param        address   path      string  true  "Wallet Address"
 // @Success      200       {object}  models.GetBalanceSuccessResponse
-// @Failure      400       {object}  models.GetBalanceFailureResponse
-// @Failure      500       {object}  models.GetBalanceFailureResponse
+// @Failure      400       {object}  models.GenericFailureResponse
+// @Failure      500       {object}  models.GenericFailureResponse
 // @Router       /balance/{address} [get]
 func GetBalance(c *gin.Context) {
 	_address := c.Param("address")
@@ -54,8 +54,8 @@ func GetBalance(c *gin.Context) {
 // @Produce      json
 // @Param        addresses  query     string  true  "Comma-separated list of addresses"
 // @Success      200        {object}  models.GetBalancesSuccessResponse
-// @Failure      400        {object}  models.GetBalancesFailureResponse
-// @Failure      500        {object}  models.GetBalancesFailureResponse
+// @Failure      400        {object}  models.GenericFailureResponse
+// @Failure      500        {object}  models.GenericFailureResponse
 // @Router       /balance [get]
 func GetBalances(c *gin.Context) {
 	addrStr := c.Query("addresses")

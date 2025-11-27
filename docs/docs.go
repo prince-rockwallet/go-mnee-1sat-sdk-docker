@@ -44,13 +44,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.GetBalancesFailureResponse"
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.GetBalancesFailureResponse"
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -85,13 +85,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.GetBalanceFailureResponse"
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.GetBalanceFailureResponse"
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -117,13 +117,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.GetConfigSuccessResponse"
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/models.GetConfigFailureResponse"
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -164,8 +164,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.GetHistorySuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -199,8 +210,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.PartialSignSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -229,8 +257,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.GetTicketSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -264,8 +303,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.TransferSyncSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -299,8 +355,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.TransferAsyncSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -334,8 +407,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.TransferSyncSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -369,8 +459,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.TransferAsyncSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -399,8 +506,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.GetUtxosSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -441,8 +559,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.GetUtxosSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GenericFailureResponse"
                         }
                     }
                 }
@@ -501,16 +630,15 @@ const docTemplate = `{
                 }
             }
         },
-        "models.GetBalanceFailureResponse": {
+        "models.GenericFailureResponse": {
             "type": "object",
             "properties": {
                 "message": {
                     "type": "string",
-                    "example": "failed to fetch balances"
+                    "example": "error description"
                 },
                 "success": {
                     "type": "boolean",
-                    "default": false,
                     "example": false
                 }
             }
@@ -526,20 +654,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.GetBalancesFailureResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "failed to fetch balances"
-                },
-                "success": {
-                    "type": "boolean",
-                    "default": false,
-                    "example": false
                 }
             }
         },
@@ -560,20 +674,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.GetConfigFailureResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "failed to fetch config"
-                },
-                "success": {
-                    "type": "boolean",
-                    "default": false,
-                    "example": false
-                }
-            }
-        },
         "models.GetConfigSuccessResponse": {
             "type": "object",
             "properties": {
@@ -585,6 +685,110 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.GetHistorySuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.HistoryDataWrapper"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "models.GetTicketSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.Ticket"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "models.GetUtxosSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.MneeTxo"
+                    }
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "models.HistoryDataWrapper": {
+            "type": "object",
+            "properties": {
+                "history": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.TransactionHistoryDTO"
+                    }
+                }
+            }
+        },
+        "models.PartialSignSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.RawTxWrapper"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "models.RawTxWrapper": {
+            "type": "object",
+            "properties": {
+                "rawTxHex": {
+                    "type": "string",
+                    "example": "02000000..."
+                }
+            }
+        },
+        "models.TicketIdWrapper": {
+            "type": "object",
+            "properties": {
+                "ticketId": {
+                    "type": "string",
+                    "example": "KKJS-..."
+                }
+            }
+        },
+        "models.TransferAsyncSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.TicketIdWrapper"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "models.TransferSyncSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.TransferResponseDTO"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
@@ -602,6 +806,51 @@ const docTemplate = `{
                 }
             }
         },
+        "types.BsvData": {
+            "type": "object",
+            "properties": {
+                "amt": {
+                    "type": "integer"
+                },
+                "dec": {
+                    "type": "integer"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "op": {
+                    "type": "string"
+                },
+                "sym": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.CosignData": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cosigner": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.Data": {
+            "type": "object",
+            "properties": {
+                "bsv21": {
+                    "$ref": "#/definitions/types.BsvData"
+                },
+                "cosign": {
+                    "$ref": "#/definitions/types.CosignData"
+                }
+            }
+        },
         "types.Fee": {
             "type": "object",
             "properties": {
@@ -612,6 +861,50 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "min": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.MneeTxo": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.Data"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "idx": {
+                    "type": "integer"
+                },
+                "outpoint": {
+                    "type": "string"
+                },
+                "owners": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "satoshis": {
+                    "type": "integer"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "script": {
+                    "type": "string"
+                },
+                "senders": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "txid": {
+                    "type": "string"
+                },
+                "vout": {
                     "type": "integer"
                 }
             }
@@ -641,6 +934,104 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "tokenId": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.Ticket": {
+            "type": "object",
+            "properties": {
+                "action_requested": {
+                    "type": "string"
+                },
+                "callback_secret": {
+                    "type": "string"
+                },
+                "callback_url": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/types.TicketStatus"
+                },
+                "tx_hex": {
+                    "type": "string"
+                },
+                "tx_id": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.TicketStatus": {
+            "type": "string",
+            "enum": [
+                "BROADCASTING",
+                "SUCCESS"
+            ],
+            "x-enum-varnames": [
+                "BROADCASTING",
+                "SUCCESS"
+            ]
+        },
+        "types.TransactionHistoryDTO": {
+            "type": "object",
+            "properties": {
+                "height": {
+                    "type": "integer"
+                },
+                "idx": {
+                    "type": "integer"
+                },
+                "outs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "rawtx": {
+                    "type": "string"
+                },
+                "receivers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "senders": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "txid": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.TransferResponseDTO": {
+            "type": "object",
+            "properties": {
+                "txhex": {
+                    "type": "string"
+                },
+                "txid": {
                     "type": "string"
                 }
             }
