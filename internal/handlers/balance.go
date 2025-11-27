@@ -6,6 +6,7 @@ import (
 
 	"github.com/bsv-blockchain/go-sdk/script"
 	"github.com/gin-gonic/gin"
+	mnee "github.com/mnee-xyz/go-mnee-1sat-sdk"
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
 )
 
@@ -37,7 +38,7 @@ func GetBalance(c *gin.Context) {
 	}
 
 	if len(balances) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"success": false, "message": "Address not found"})
+		c.JSON(http.StatusOK, gin.H{"success": true, "data": mnee.BalanceDataDTO{Address: &address.AddressString, Amt: 0.0, Precised: 0.0}})
 		return
 	}
 
@@ -82,6 +83,12 @@ func GetBalances(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
 		return
+	}
+
+	if len(balances) == 0 {
+		for _, addr := range addresses {
+			balances = append(balances, mnee.BalanceDataDTO{Address: &addr, Amt: 0.0, Precised: 0.0})
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": balances})
