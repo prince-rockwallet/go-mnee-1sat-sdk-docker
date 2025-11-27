@@ -35,6 +35,102 @@ definitions:
     - request
     - wifs
     type: object
+  models.GetBalanceFailureResponse:
+    properties:
+      message:
+        example: failed to fetch balances
+        type: string
+      success:
+        default: false
+        example: false
+        type: boolean
+    type: object
+  models.GetBalanceSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/types.BalanceDataDTO'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  models.GetBalancesFailureResponse:
+    properties:
+      message:
+        example: failed to fetch balances
+        type: string
+      success:
+        default: false
+        example: false
+        type: boolean
+    type: object
+  models.GetBalancesSuccessResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.BalanceDataDTO'
+        type: array
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  models.GetConfigFailureResponse:
+    properties:
+      message:
+        example: failed to fetch config
+        type: string
+      success:
+        default: false
+        example: false
+        type: boolean
+    type: object
+  models.GetConfigSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/types.SystemConfig'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  types.BalanceDataDTO:
+    properties:
+      address:
+        type: string
+      amt:
+        type: number
+      precised:
+        type: number
+    type: object
+  types.Fee:
+    properties:
+      fee:
+        type: integer
+      max:
+        type: integer
+      min:
+        type: integer
+    type: object
+  types.SystemConfig:
+    properties:
+      approver:
+        type: string
+      burnAddress:
+        type: string
+      decimals:
+        type: integer
+      feeAddress:
+        type: string
+      fees:
+        items:
+          $ref: '#/definitions/types.Fee'
+        type: array
+      mintAddress:
+        type: string
+      tokenId:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -57,8 +153,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.GetBalancesSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GetBalancesFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GetBalancesFailureResponse'
       summary: Get balances for multiple addresses
       tags:
       - Balance
@@ -77,8 +180,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.GetBalanceSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GetBalanceFailureResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GetBalanceFailureResponse'
       summary: Get balance for a single address
       tags:
       - Balance
@@ -91,8 +201,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/models.GetConfigSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.GetConfigSuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.GetConfigFailureResponse'
       summary: Get System Config
       tags:
       - Config

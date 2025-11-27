@@ -12,7 +12,9 @@ import (
 // @Description  Returns current MNEE system configuration.
 // @Tags         Config
 // @Produce      json
-// @Success      200       {object}  map[string]interface{}
+// @Success      200       {object}  models.GetConfigSuccessResponse
+// @Success      400       {object}  models.GetConfigSuccessResponse
+// @Failure      500       {object}  models.GetConfigFailureResponse
 // @Router       /config [get]
 func GetConfig(c *gin.Context) {
 	config, err := services.Instance.GetConfig(c.Request.Context())

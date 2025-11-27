@@ -38,8 +38,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.GetBalancesSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetBalancesFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetBalancesFailureResponse"
                         }
                     }
                 }
@@ -68,8 +79,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.GetBalanceSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetBalanceFailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetBalanceFailureResponse"
                         }
                     }
                 }
@@ -89,8 +111,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.GetConfigSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetConfigSuccessResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.GetConfigFailureResponse"
                         }
                     }
                 }
@@ -465,6 +498,150 @@ const docTemplate = `{
                         "L1dRKo...",
                         "K2..."
                     ]
+                }
+            }
+        },
+        "models.GetBalanceFailureResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "failed to fetch balances"
+                },
+                "success": {
+                    "type": "boolean",
+                    "default": false,
+                    "example": false
+                }
+            }
+        },
+        "models.GetBalanceSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.BalanceDataDTO"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.GetBalancesFailureResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "failed to fetch balances"
+                },
+                "success": {
+                    "type": "boolean",
+                    "default": false,
+                    "example": false
+                }
+            }
+        },
+        "models.GetBalancesSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.BalanceDataDTO"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.GetConfigFailureResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "failed to fetch config"
+                },
+                "success": {
+                    "type": "boolean",
+                    "default": false,
+                    "example": false
+                }
+            }
+        },
+        "models.GetConfigSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.SystemConfig"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "types.BalanceDataDTO": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "amt": {
+                    "type": "number"
+                },
+                "precised": {
+                    "type": "number"
+                }
+            }
+        },
+        "types.Fee": {
+            "type": "object",
+            "properties": {
+                "fee": {
+                    "type": "integer"
+                },
+                "max": {
+                    "type": "integer"
+                },
+                "min": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.SystemConfig": {
+            "type": "object",
+            "properties": {
+                "approver": {
+                    "type": "string"
+                },
+                "burnAddress": {
+                    "type": "string"
+                },
+                "decimals": {
+                    "type": "integer"
+                },
+                "feeAddress": {
+                    "type": "string"
+                },
+                "fees": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Fee"
+                    }
+                },
+                "mintAddress": {
+                    "type": "string"
+                },
+                "tokenId": {
+                    "type": "string"
                 }
             }
         }
