@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/bsv-blockchain/go-sdk/script"
 	"github.com/gin-gonic/gin"
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
 )
@@ -31,6 +32,12 @@ func GetHistory(c *gin.Context) {
 	for _, addr := range rawAddresses {
 		trimmed := strings.TrimSpace(addr)
 		if trimmed != "" {
+			address, err := script.NewAddressFromString(trimmed)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address: " + trimmed})
+				return
+			}
+			addresses = append(addresses, address.AddressString)
 			addresses = append(addresses, trimmed)
 		}
 	}
@@ -40,8 +47,39 @@ func GetHistory(c *gin.Context) {
 		return
 	}
 
-	fromScore, _ := strconv.Atoi(c.DefaultQuery("fromScore", "0"))
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	var fromScore int
+	fromQuery := c.Query("fromScore")
+	if fromQuery == "" {
+		fromScore = 0
+	} else {
+		var err error
+		fromScore, err = strconv.Atoi(fromQuery)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "fromScore must be a valid integer"})
+			return
+		}
+		if fromScore < 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "fromScore must not be negative"})
+			return
+		}
+	}
+
+	var limit int
+	limitQuery := c.Query("limit")
+	if limitQuery == "" {
+		limit = 10
+	} else {
+		var err error
+		limit, err = strconv.Atoi(limitQuery)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "limit must be a valid integer"})
+			return
+		}
+		if limit < 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "limit must not be negative"})
+			return
+		}
+	}
 
 	history, err := services.Instance.GetSpecificTransactionHistory(c.Request.Context(), addresses, fromScore, limit)
 	if err != nil {

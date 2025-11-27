@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/bsv-blockchain/go-sdk/script"
 	"github.com/gin-gonic/gin"
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
 )
@@ -29,7 +30,12 @@ func GetAllUtxos(c *gin.Context) {
 	for _, addr := range rawAddresses {
 		trimmed := strings.TrimSpace(addr)
 		if trimmed != "" {
-			addresses = append(addresses, trimmed)
+			address, err := script.NewAddressFromString(trimmed)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address: " + trimmed})
+				return
+			}
+			addresses = append(addresses, address.AddressString)
 		}
 	}
 
@@ -69,7 +75,12 @@ func GetPaginatedUtxos(c *gin.Context) {
 	for _, addr := range rawAddresses {
 		trimmed := strings.TrimSpace(addr)
 		if trimmed != "" {
-			addresses = append(addresses, trimmed)
+			address, err := script.NewAddressFromString(trimmed)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address: " + trimmed})
+				return
+			}
+			addresses = append(addresses, address.AddressString)
 		}
 	}
 
@@ -78,8 +89,39 @@ func GetPaginatedUtxos(c *gin.Context) {
 		return
 	}
 
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	size, _ := strconv.Atoi(c.DefaultQuery("size", "10"))
+	var page int
+	pageQuery := c.Query("page")
+	if pageQuery == "" {
+		page = 1
+	} else {
+		var err error
+		page, err = strconv.Atoi(pageQuery)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "page must be a valid integer"})
+			return
+		}
+		if page < 1 {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "page must be greater than 0"})
+			return
+		}
+	}
+
+	var size int
+	sizeQuery := c.Query("size")
+	if sizeQuery == "" {
+		size = 10
+	} else {
+		var err error
+		size, err = strconv.Atoi(sizeQuery)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "size must be a valid integer"})
+			return
+		}
+		if size < 1 {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "size must be greater than 0"})
+			return
+		}
+	}
 
 	txos, err := services.Instance.GetPaginatedUnspentTxos(c.Request.Context(), addresses, page, size)
 	if err != nil {

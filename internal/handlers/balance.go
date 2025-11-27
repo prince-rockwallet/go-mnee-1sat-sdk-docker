@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/bsv-blockchain/go-sdk/script"
 	"github.com/gin-gonic/gin"
 	"github.com/mnee-xyz/go-mnee-1sat-sdk-docker/internal/services"
 )
@@ -17,13 +18,19 @@ import (
 // @Success      200       {object}  map[string]interface{}
 // @Router       /balance/{address} [get]
 func GetBalance(c *gin.Context) {
-	address := c.Param("address")
-	if address == "" {
+	_address := c.Param("address")
+	if _address == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Address is required"})
 		return
 	}
 
-	balances, err := services.Instance.GetBalances(c.Request.Context(), []string{address})
+	address, err := script.NewAddressFromString(_address)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address: " + _address})
+		return
+	}
+
+	balances, err := services.Instance.GetBalances(c.Request.Context(), []string{address.AddressString})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
 		return
@@ -57,7 +64,12 @@ func GetBalances(c *gin.Context) {
 	for _, addr := range rawAddresses {
 		trimmed := strings.TrimSpace(addr)
 		if trimmed != "" {
-			addresses = append(addresses, trimmed)
+			address, err := script.NewAddressFromString(trimmed)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid wallet address: " + trimmed})
+				return
+			}
+			addresses = append(addresses, address.AddressString)
 		}
 	}
 
