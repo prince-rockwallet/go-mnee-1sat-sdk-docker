@@ -28,7 +28,7 @@ func PollTicket(c *gin.Context) {
 
 	ticket, err := services.Instance.PollTicket(c.Request.Context(), ticketID, 2*time.Second)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 

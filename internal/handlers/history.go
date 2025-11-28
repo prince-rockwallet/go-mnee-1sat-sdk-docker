@@ -85,7 +85,7 @@ func GetHistory(c *gin.Context) {
 
 	history, err := services.Instance.GetSpecificTransactionHistory(c.Request.Context(), addresses, fromScore, limit)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 

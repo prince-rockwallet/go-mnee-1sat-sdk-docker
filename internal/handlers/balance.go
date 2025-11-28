@@ -35,7 +35,7 @@ func GetBalance(c *gin.Context) {
 
 	balances, err := services.Instance.GetBalances(c.Request.Context(), []string{address.AddressString})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": err.Error()})
 		return
 	}
 
@@ -85,7 +85,7 @@ func GetBalances(c *gin.Context) {
 
 	balances, err := services.Instance.GetBalances(c.Request.Context(), addresses)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": err.Error()})
 		return
 	}
 

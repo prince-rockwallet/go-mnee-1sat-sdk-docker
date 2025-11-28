@@ -19,7 +19,7 @@ import (
 func GetConfig(c *gin.Context) {
 	config, err := services.Instance.GetConfig(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": err.Error()})
 		return
 	}
 

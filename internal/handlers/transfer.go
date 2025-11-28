@@ -63,7 +63,7 @@ func TransferSync(c *gin.Context) {
 
 	resp, err := services.Instance.SynchronousTransfer(c.Request.Context(), req.Wifs, dtos, false, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 
@@ -114,7 +114,7 @@ func TransferAsync(c *gin.Context) {
 
 	ticketID, err := services.Instance.AsynchronousTransfer(c.Request.Context(), req.Wifs, dtos, false, nil, nil, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 
@@ -152,7 +152,7 @@ func SubmitRawTxSync(c *gin.Context) {
 
 	resp, err := services.Instance.SubmitRawTxSync(c.Request.Context(), req.RawTxHex)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 
@@ -188,7 +188,7 @@ func SubmitRawTxAsync(c *gin.Context) {
 
 	ticketID, err := services.Instance.SubmitRawTxAsync(c.Request.Context(), req.RawTxHex, nil, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 

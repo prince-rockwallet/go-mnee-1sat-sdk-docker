@@ -51,7 +51,7 @@ func PartialSign(c *gin.Context) {
 
 	hex, err := services.Instance.PartialSign(c.Request.Context(), req.Wifs, dtos, false, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.GenericFailureResponse{Success: false, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, models.GenericFailureResponse{Success: false, Message: err.Error()})
 		return
 	}
 
